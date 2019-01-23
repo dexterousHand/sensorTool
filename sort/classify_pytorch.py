@@ -68,11 +68,6 @@ class CNN(nn.Module):
             nn.Dropout(0.7),
             nn.ReLU(inplace=True),  # activation
         )
-        # self.conv7 = nn.Sequential(  # input shape (128, 15, 20)
-        #     nn.Conv2d(512, 1024, 5, 1, 2),  # output shape (128, 15, 20)
-        #     nn.BatchNorm2d(1024),
-        #     nn.ReLU(inplace=True),  # activation
-        # )
         self.out = nn.Sequential(
             nn.Linear(512 * 15 * 20, 500),
             nn.Dropout(0.7),
@@ -87,9 +82,6 @@ class CNN(nn.Module):
         x = self.conv4(x.float())
         x = self.conv5(x.float())
         x = self.conv6(x.float())
-        # x = self.conv7(x.float())
-        # for i in range(3):
-        #     x=self.conv(x.float())
         x = x.view(x.size(0), -1)  # flatten the output of conv2 to (batch_size, 32 * 7 * 7)
         output = self.out(x)
         return output, x  # return x for visualization
@@ -97,21 +89,8 @@ class CNN(nn.Module):
 
 def restore_params(model):
     print("restore parameters")
-    # model.conv1.load_state_dict(torch.load('./conv1.pkl'))
-    # model.conv2.load_state_dict(torch.load('./conv2.pkl'))
-    # model.conv3.load_state_dict(torch.load('./conv3.pkl'))
-    # model.conv4.load_state_dict(torch.load('./conv4.pkl'))
-    # model.conv5.load_state_dict(torch.load('./conv5.pkl'))
-    # model.conv6.load_state_dict(torch.load('./conv6.pkl'))
-    # model.out.load_state_dict(torch.load('./out.pkl'))
-    model.conv1.load_state_dict(torch.load('../sort/conv1.pkl'))
-    model.conv2.load_state_dict(torch.load('../sort/conv2.pkl'))
-    model.conv3.load_state_dict(torch.load('../sort/conv3.pkl'))
-    model.conv4.load_state_dict(torch.load('../sort/conv4.pkl'))
-    model.conv5.load_state_dict(torch.load('../sort/conv5.pkl'))
-    model.conv6.load_state_dict(torch.load('../sort/conv6.pkl'))
-    # model.conv7.load_state_dict(torch.load('../sort/conv7.pkl'))
-    model.out.load_state_dict(torch.load('../sort/out.pkl'))
+    # model.load_state_dict(torch.load('../sort/key.pkl'))
+    model.load_state_dict(torch.load('../sort/spoon.pkl'))
 
 
 def test(model, test_loader):
@@ -193,23 +172,11 @@ def initNet():
     # 恢复参数
     restore_params(cnn)
     cnn.eval()
-    ### test alg_______________________
-    # test_data, test_label = load_test_data("./test.npy")
-    # test_loader = init_dataloader(test_data, test_label, TEST_BATCH_SIZE)
-    # accuracy = test(cnn, test_loader)
-    # print("test accuracy:", accuracy)
-    ###_______________________________
-    test_data, test_label = load_test_data("../sort/test.npy")
+
 
 
 def guitest(filename):
     global test_data, test_label, cnn
-    sample_data = test_data[0].cpu().numpy()[np.newaxis]
-    # sample_label = test_label[index].cpu().numpy()[np.newaxis]
-    # sample_data = torch.tensor(sample_data).cuda()
-    # pred = test_sample(cnn, sample_data, sample_label)
-    ###read img
-    # print("sample_data1:",sample_data)
     sample_data = torch.tensor(loadimg(filename)).cuda()
 
     # print("sample_data2:",sample_data)
