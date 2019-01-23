@@ -14,27 +14,27 @@ from sklearn.neighbors import LocalOutlierFactor
 class GetPoint():
     def __init__(self):
 
-        c = cv2.imread("/home/robot/Desktop/black/1.png")
-        d = cv2.imread("/home/robot/Desktop/black/2.png")
-        e = cv2.imread("/home/robot/Desktop/black/3.png")
-        f = cv2.imread("/home/robot/Desktop/black/4.png")
-        g = cv2.imread("/home/robot/Desktop/black/5.png")
+        c = cv2.imread(r"sort/black/1.png")
+        d = cv2.imread(r"sort/black/2.png")
+        e = cv2.imread(r"sort/black/3.png")
+        f = cv2.imread(r"sort/black/4.png")
+        g = cv2.imread(r"sort/black/5.png")
 
-        b1 = cv2.imread("/home/robot/Desktop/blue/1.png")
-        b2 = cv2.imread("/home/robot/Desktop/blue/2.png")
-        b3 = cv2.imread("/home/robot/Desktop/blue/3.png")
-        b4 = cv2.imread("/home/robot/Desktop/blue/2nd/9.png")
-        b5 = cv2.imread("/home/robot/Desktop/blue/3nd/18.png")
+        b1 = cv2.imread(r"sort/blue/1.png")
+        b2 = cv2.imread(r"sort/blue/2.png")
+        b3 = cv2.imread(r"sort/blue/3.png")
+        b4 = cv2.imread(r"sort/blue/2nd/9.png")
+        b5 = cv2.imread(r"sort/blue/3nd/18.png")
 
-        w1= cv2.imread("/home/robot/Desktop/white/4.png")
-        w2 = cv2.imread("/home/robot/Desktop/white/5.png")
-        w3 = cv2.imread("/home/robot/Desktop/white/6.png")
-        w4 = cv2.imread("/home/robot/Desktop/white/2nd/8.png")
-        w5 = cv2.imread("/home/robot/Desktop/white/3rd/23.png")
+        w1= cv2.imread(r"sort/white/4.png")
+        w2 = cv2.imread(r"sort/white/5.png")
+        w3 = cv2.imread(r"sort/white/6.png")
+        w4 = cv2.imread(r"sort/white/2nd/8.png")
+        w5 = cv2.imread(r"sort/white/3rd/23.png")
 
-        p1= cv2.imread("/home/robot/Desktop/purple/12.png")
-        p2= cv2.imread("/home/robot/Desktop/purple/13.png")
-        p3= cv2.imread("/home/robot/Desktop/purple/14.png")
+        p1= cv2.imread(r"sort/purple/12.png")
+        p2= cv2.imread(r"sort/purple/13.png")
+        p3= cv2.imread(r"sort/purple/14.png")
 
 
 
@@ -101,15 +101,16 @@ class GetPoint():
         Y = np.array(Y)
         backgrounds = np.array(backgrounds)
         all = np.concatenate((blacks, blues, whites, purples), axis=0)
-        print("all shape", all.shape)
-        print("y", Y.shape)
+        #print("all shape", all.shape)
+        #print("y", Y.shape)
 
         self.svc=svm.SVC(kernel='poly',degree=2,gamma=1,coef0=0.05)
 
         self.svc.fit(all,Y)
 
         pre=self.svc.predict(all)
-        print(pre)
+        #print(pre)
+        print("temperature initialization is ok")
 
 
 if __name__ == "__main__":

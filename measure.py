@@ -7,12 +7,12 @@
 """""
 import numpy as np
 import cv2
-# import tempdiscern
-from sort.classify_pytorch import initNet, guitest
-initNet()
+from test3 import GetPoint
+# from sort.classify_pytorch import initNet, guitest
+# initNet()
 # 调用笔记本内置摄像头，所以参数为0，如果有其他的摄像头可以调整参数为1，2
-cap = cv2.VideoCapture(1)
-
+cap = cv2.VideoCapture(0)
+g = GetPoint()
 def cameraTest():
     i0=0
     i1 = 0
@@ -31,9 +31,10 @@ def cameraTest():
         # t.discern(img)
         # print(sucess)
         # 转为灰度图片
-        gray = cv2.cvtColor(img, 1)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        #print("hh")
         # 显示摄像头，背景是灰度。
-        cv2.imshow("img", gray)
+        cv2.imshow("img", img)
         # 保持画面的持续。
         k = cv2.waitKey(1)
         if k == 27:
@@ -54,13 +55,13 @@ def cameraTest():
             # cv2.imwrite("./sort"+str(i1)+".png",img)
         elif k == ord("0"):
             # 通过1键保存第一类图片
-            i0 += 1
+            i0 += 1   #右旋，顺时针
             print("保存第 0 类图片，第 " + str(i0) + " 张图片")
             cv2.imwrite("./sort/0/" + str(i0) + ".png", img)
             # cv2.imwrite("./sort"+str(i1)+".png",img)
         elif k == ord("2"):
             # 通过2键保存第二类图片
-            i2 += 1
+            i2 += 1 #左旋
             print("保存第 二 类图片，第 " + str(i2) + " 张图片")
             cv2.imwrite("./sort/2/" + str(i2) + ".png", img)
         elif k == ord("3"):
@@ -76,6 +77,30 @@ def cameraTest():
         elif (k == ord("t")):
             print("temperature")
             cv2.imwrite("temporature.jpg", img)
+
+            # img = cv2.imread(r'/home/robot/Desktop/sensortool/sort/purple/26.png',0)
+            img_t = cv2.medianBlur(gray, 5)
+
+            circles = cv2.HoughCircles(img_t, cv2.HOUGH_GRADIENT, 1, 20,
+                                       param1=50, param2=30, minRadius=5, maxRadius=15)
+            try:
+                circles = np.uint16(np.around(circles))
+                colors = []
+                # print(circles[0,:])
+                for i in circles[0, :]:
+                    colors.append(img[i[1], i[0]])
+                    pass
+                # print(colors)
+                color = np.mean(colors, axis=0)
+                # print(color)
+                t = g.svc.predict([color]) # t = 1,2,3,4
+                print(t[0])
+                tem = ["black", "blue", "white", "purple"]
+                print(tem[t[0] - 1])
+                return tem[t[0] - 1]
+            except AttributeError:
+                pass
+
 
 
         elif k == ord("4"):
