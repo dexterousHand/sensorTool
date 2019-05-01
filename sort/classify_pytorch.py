@@ -89,8 +89,8 @@ class CNN(nn.Module):
 
 def restore_params(model):
     print("restore parameters")
-    # model.load_state_dict(torch.load('../sort/key.pkl'))
-    model.load_state_dict(torch.load('../sort/spoon.pkl'))
+    model.load_state_dict(torch.load('../sort/key.pkl'))
+    # model.load_state_dict(torch.load('../sort/spoon.pkl'))
 
 
 def test(model, test_loader):

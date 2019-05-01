@@ -1,6 +1,6 @@
 import threading
 import cv2
-
+import time
 global timer
 import sys
 import os
@@ -8,16 +8,15 @@ import os
 def shot_img():
     global num
     success, frame = cap.read()
-    path = "./sort/7/"
+    path = "./sort/2/"
     num += 1
     cv2.imwrite(path + str(num) + '.png', frame)
     print(num)
-    if num == 200:
+    if num == 400:
         cap.release()
         cv2.destroyAllWindows()
         os._exit(0)
-    timer = threading.Timer(1, shot_img)
-    timer.start()
+    threading.Timer(2, shot_img).start()
 
 
 def showImg():
@@ -33,11 +32,10 @@ def showImg():
 
 
 if __name__ == '__main__':
-    num = 0
-    cap = cv2.VideoCapture(1)
-    timer = threading.Timer(3, shot_img)
-    show = threading.Thread(target=showImg)
-    show.start()
-    timer.start()
-    show.join()
-    timer.join()
+    num = 320
+    cap = cv2.VideoCapture(0)
+    shot_img()
+    threading.Thread(target=showImg).start()
+    # shot_img()
+    # show.join()
+    # timer.join()

@@ -29,16 +29,22 @@ except ImportError:
 if sys.platform == "win32":
     import ctypes
 
-
 # import torch
-resSort=mp.Value('d',-1)
+resSort = mp.Value('d', -1)
+resColor = mp.Value('d', -1)
+resAngle = mp.Value('d',-1)
+
 def mp_camera():
     from measure import cameraTest
     while (True):
-        resSort.value = int(cameraTest())
-
-        print(int(resSort.value))
-        # q.put(sort)
+        (res, kind) = cameraTest()
+        if kind == "sort":
+            resSort.value = int(res)
+        elif kind == "color":
+            resColor.value = int(res)
+        elif kind == "angle":
+            resAngle.value=int(res)
+            print(resAngle.value)
 
 
 class MainWindow(QMainWindow):
@@ -77,6 +83,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         # self.sensor = self.sensors["none"]
         self.sensor = self.sensors["serial"]
+        self.tem = ["black（cold）", "blue(normal）", "white（hot）", "purple（cool）"]
         self.init_ui()
         self.init_welcome()
         self.init_serialCensor()
@@ -160,40 +167,51 @@ class MainWindow(QMainWindow):
         # self.timer_camera = QTimer()
         # self.__layout_data_show = QVBoxLayout()
         layout_main = QVBoxLayout()
-        info = QLabel("说明：在摄像头窗口中输入 s 进行对当前图像到分类识别")
-        info.setFont(QFont("Roman times", 8,QFont.Bold))
+        info = QLabel("说明：在摄像头窗口中输入 s 进行对当前图像到分类识别\n\t输入 t 进行温度识别")
+        info.setFont(QFont("Roman times", 9, QFont.Bold))
         layout_sort = QHBoxLayout()
-        layout_color=QHBoxLayout()
+        layout_color = QHBoxLayout()
+        layout_angle = QHBoxLayout()
+        #________________
         # 按键手动更新
-        btn_sort= QPushButton(u'刷新类别')
-        btn_color = QPushButton(u'刷新颜色')
-        btn_sort.setFont(QFont("Roman times", 10, QFont.Bold))
-        btn_color.setFont(QFont("Roman times", 10, QFont.Bold))
+        # btn_sort = QPushButton(u'刷新类别')
+        # btn_color = QPushButton(u'刷新颜色')
+        # btn_sort.setFont(QFont("Roman times", 10, QFont.Bold))
+        # btn_color.setFont(QFont("Roman times", 10, QFont.Bold))
         # btn_sort.setMinimumHeight(50)
         # btn_color.setMinimumHeight(50)
-        btn_sort.clicked.connect(self.sort_show)
+        # btn_sort.clicked.connect(self.sort_show)
+        # btn_color.clicked.connect(self.color_show)
+        ### auto refresh
+        #___________________
         self.sort = QLabel("待测类别")
         self.color = QLabel("待测颜色")
-        self.sort.setFont(QFont("Roman times", 10, QFont.Bold))
-        self.color.setFont(QFont("Roman times", 10, QFont.Bold))
+        self.angle = QLabel("待测角度")
+        self.sort.setFont(QFont("Roman times", 12, QFont.Bold))
+        self.color.setFont(QFont("Roman times", 12, QFont.Bold))
+        self.angle.setFont(QFont("Roman times", 12, QFont.Bold))
         # 自动更新
-        #在类中定义一个定时器,并在构造函数中设置启动及其信号和槽
+        # 在类中定义一个定时器,并在构造函数中设置启动及其信号和槽
         self.timer = QTimer(self)
         self.timer.start(300)
         self.timer.timeout.connect(self.sort_show)
+        self.timer.timeout.connect(self.color_show)
+        self.timer.timeout.connect(self.angle_show)
 
         # 布局设置
         layout_sort.addStretch(1)
-        layout_sort.addWidget(btn_sort)
         layout_sort.addWidget(self.sort)
         layout_sort.addStretch(8)
         layout_color.addStretch(1)
-        layout_color.addWidget(btn_color)
         layout_color.addWidget(self.color)
         layout_color.addStretch(8)
+        layout_angle.addStretch(1)
+        layout_angle.addWidget(self.angle)
+        layout_angle.addStretch(8)
         layout_main.addWidget(info)
         layout_main.addLayout(layout_sort)
         layout_main.addLayout(layout_color)
+        layout_main.addLayout(layout_angle)
         layout_main.addStretch(1)
         self.cameraCensorWidget.setLayout(layout_main)
         # cameraTest()
@@ -202,8 +220,23 @@ class MainWindow(QMainWindow):
         # self.label_show_camera.setPixmap(QPixmap.fromImage(showImage))
 
     def sort_show(self):
-        if resSort.value!=-1:
-            self.sort.setText("这是第 "+str(int(resSort.value))+" 类")
+        # if resSort.value != -1:
+        #     self.sort.setText("这是第 " + str(int(resSort.value)) + " 类")
+        if resSort.value == 1:
+            self.sort.setText("这是标记black的勺子")
+        elif resSort.value == 2:
+            self.sort.setText("这是标记green的勺子")
+        elif resSort.value == 3:
+            self.sort.setText("这是标记red的勺子")
+        elif resSort.value == 4:
+            self.sort.setText("这是标记yellow的勺子")
+    def color_show(self):
+        if resColor.value != -1:
+            self.color.setText( self.tem[int(resColor.value) - 1  ] )
+
+    def angle_show(self):
+        if resAngle.value != -1:
+            self.angle.setText("当前角度："+str(resAngle.value))
 
     def __del__(self):
         return
